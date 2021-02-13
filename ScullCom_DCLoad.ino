@@ -9,7 +9,7 @@
                                               // https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads/NewliquidCrystal_1.3.4.zip
 #include <math.h>                             //
 #include <Adafruit_MCP4725.h>                 //Adafruit DAC library  https://github.com/adafruit/Adafruit_MCP4725
-#include <MCP342x.h>                          //uChip library avaiable from https://github.com/uChip/MCP342X
+#include <MCP342X.h>                          //uChip library avaiable from https://github.com/uChip/MCP342X
 #include <MCP79410_Timer.h>                   //Scullcom Hobby Electronics library  http://www.scullcom.com/MCP79410Timer-master.zip
 #include <EEPROM.h>                           //include EEPROM library used for storing setup data
 
@@ -66,6 +66,7 @@ float BatteryLifePrevious = 0;                //
 float Seconds = 0;                            //time variable used in Battery Capacity Mode (BC)
 float SecondsLog = 0;                         //variable used for data logging of the time in seconds
 float BatteryCutoffVolts;                     //used to set battery discharge cut-off voltage
+int   BatteryNumOfCells = 1;				  //number of cell in battery discharge preset mode
 float MaxBatteryCurrent = 1.0;                //maximum battery current allowed for Battery Capacity Testing
 
 int stopSeconds;                              //store for seconds when timer stopped
@@ -192,18 +193,17 @@ void setup() {
   lcd.begin(20, 4);                                        //set up the LCD's number of columns and rows 
   lcd.setBacklightPin(3,POSITIVE);                         // BL, BL_POL
   lcd.setBacklight(HIGH);                                  //set LCD backlight on
- 
   lcd.clear();                                             //clear LCD display
-  lcd.setCursor(6,0);                                      //set LCD cursor to column 0, row 4
-  lcd.print("SCULLCOM");                                   //print SCULLCOM to display with 5 leading spaces (you can change to your own)
-  lcd.setCursor(1,1);                                      //set LCD cursor to column 0, row 1 (start of second line)
-  lcd.print("Hobby Electronics");                          //print Hobby Electronics to display (you can change to your own)
+  lcd.setCursor(6,0);									   //set LCD cursor to column 0, row 4
+  lcd.print("SCULLCOM");										//print SCULLCOM to display with 5 leading spaces (you can change to your own)
+  lcd.setCursor(1,1);										//set LCD cursor to column 0, row 1 (start of second line)
+  lcd.print("Hobby Electronics");										//print Hobby Electronics to display (you can change to your own)
   lcd.setCursor(1,2);
-  lcd.print("DC Electronic Load"); //
+  lcd.print("DC Electronic Load");										//DC Electronic Load
   lcd.setCursor(0,3);
-  lcd.print("Ver. 36P (Mod.)"); //
-  delay(3000);                                             //3000 mSec delay for intro display
-  lcd.clear();                                             //clear dislay
+  lcd.print("Ver. 37P(Mod.)");										//Version
+  delay(3000);												//3000 mSec delay for intro display
+  lcd.clear();												 //clear dislay
   setupLimits();
   delay(3000);
   lcd.clear();
@@ -815,40 +815,60 @@ void batteryType (void) {
   customKey = customKeypad.waitForKey();                //stop everything till the user press a key.
 
   if (customKey == '1'){
-  BatteryCutoffVolts = LiPoCutOffVoltage;
-  BatteryType = ("LiPo");
+	  BatteryCutoffVolts = LiPoCutOffVoltage;
+	  BatteryType = ("LiPo");
     }
 
   if (customKey == '2'){
-  BatteryCutoffVolts = LiFeCutOffVoltage;
-  BatteryType = ("LiFe");
+	  BatteryCutoffVolts = LiFeCutOffVoltage;
+	  BatteryType = ("LiFe");
     }
 
   if (customKey == '3'){
-  BatteryCutoffVolts = NiCdCutOffVoltage;
-  BatteryType = ("NiCd");  
+	  BatteryCutoffVolts = NiCdCutOffVoltage;
+	  BatteryType = ("NiCd");  
     }
 
   if (customKey == '4'){
-  BatteryCutoffVolts = ZiZnCutOffVoltage;
-  BatteryType = ("ZiZn"); 
+	  BatteryCutoffVolts = ZiZnCutOffVoltage;
+	  BatteryType = ("ZiZn"); 
     }
 
   if (customKey == '5'){ 
-  BatteryType = ("SetV");
+	  BatteryType = ("SetV");
     }
 
   if (customKey == '6'){                                  //Exit selection screen
-  exitMode = 1;
+	  exitMode = 1;
     }
 
   if (customKey == '7' || customKey == '8' || customKey == '9' || customKey == '0' || customKey == 'A' || customKey == 'B' || customKey == 'C' || customKey == 'D' || customKey == '*' || customKey == '#' || customKey == 'E' || customKey == 'F' || customKey == '<' || customKey == '>' ){
-  batteryType();                                                      //ignore other keys
+	  batteryType();                                                      //ignore other keys
     }
 
+  if (BatteryType == "LiPo" && exitMode != 1) {
+	  setBatteryCells();
+	  BatteryCutoffVolts = (BatteryNumOfCells*LiPoCutOffVoltage);
+	  //BatteryType = BatteryType+" "+String(BatteryNumOfCells)+"cells";
+  }
+  if (BatteryType == "LiFe" && exitMode != 1) {
+	  setBatteryCells();
+	  BatteryCutoffVolts = (BatteryNumOfCells*LiFeCutOffVoltage);
+  }
+  if (BatteryType == "NiCd" && exitMode != 1) {
+	  setBatteryCells();
+	  BatteryCutoffVolts = (BatteryNumOfCells*NiCdCutOffVoltage);
+  }
+  if (BatteryType == "ZiZn" && exitMode != 1) {
+	  setBatteryCells();
+	  BatteryCutoffVolts = (BatteryNumOfCells*ZiZnCutOffVoltage);
+  }
+
   if(BatteryType == "SetV" && exitMode != 1){
-  setBatteryCutOff();
+	 setBatteryCutOff();
     }
+
+
 
   batteryTypeSelected();                                    //briefly display battery type selected and discharge cut off voltage
 
@@ -907,6 +927,24 @@ void setBatteryCutOff (void) {
   BatteryCutoffVolts = x;
 
   lcd.clear();
+}
+
+//--------------------------Set Battery number of Cells--------------------------------------------
+void setBatteryCells(void) {
+
+	lcd.clear();
+	lcd.setCursor(3, 0);
+	lcd.print("Enter Number of");
+	lcd.setCursor(3, 1);
+	lcd.print("Cells in Series");
+	y = 8;
+	z = 8;
+	r = 2;
+
+	inputValue();
+	BatteryNumOfCells = x;
+
+	lcd.clear();
 }
 
 //------------------------Key input used for Battery Cut-Off and Transient Mode------------------------
