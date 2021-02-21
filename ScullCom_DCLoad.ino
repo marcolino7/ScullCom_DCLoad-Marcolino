@@ -87,7 +87,7 @@ float setPower = 0;                           //variable used for the set power 
 float setResistance = 0;                      //variable used for the set resistance of the load
 float setCurrentCalibrationFactor = 0.980;    //calibration adjustment - set as required if needed (was 1.000)
 
-float displayCurrentCal = 0.000;              //calibration correction for LCD current display (was 0.040)
+float displayCurrentCal = -0.004;              //calibration correction for LCD current display (was 0.040)
 int Load = 0;                                 //Load On/Off flag
 
 float setControlCurrent = 0;                  //variable used to set the temporary store for control current required
@@ -200,8 +200,8 @@ void setup() {
   lcd.print("Hobby Electronics");										//print Hobby Electronics to display (you can change to your own)
   lcd.setCursor(1,2);
   lcd.print("DC Electronic Load");										//DC Electronic Load
-  lcd.setCursor(0,3);
-  lcd.print("Ver. 37P(Mod.)");										//Version
+  lcd.setCursor(1,3);
+  lcd.print("Ver. 38P(Mod.)");										//Version
   delay(3000);												//3000 mSec delay for intro display
   lcd.clear();												 //clear dislay
   setupLimits();
