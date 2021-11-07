@@ -942,7 +942,8 @@ void setBatteryCells(void) {
 	r = 2;
 
 	inputValue();
-	BatteryNumOfCells = x;
+	//BatteryNumOfCells = x;
+  BatteryNumOfCells = 1;
 
 	lcd.clear();
 }
