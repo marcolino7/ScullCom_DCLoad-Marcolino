@@ -66,8 +66,8 @@ float BatteryLifePrevious = 0;                //
 float Seconds = 0;                            //time variable used in Battery Capacity Mode (BC)
 float SecondsLog = 0;                         //variable used for data logging of the time in seconds
 float BatteryCutoffVolts;                     //used to set battery discharge cut-off voltage
-int   BatteryNumOfCells = 1;				  //number of cell in battery discharge preset mode
-float MaxBatteryCurrent = 1.0;                //maximum battery current allowed for Battery Capacity Testing
+int   BatteryNumOfCells = 1;				          //number of cell in battery discharge preset mode
+float MaxBatteryCurrent = 4.0;                //maximum battery current allowed for Battery Capacity Testing
 
 int stopSeconds;                              //store for seconds when timer stopped
 
