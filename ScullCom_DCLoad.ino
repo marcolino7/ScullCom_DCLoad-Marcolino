@@ -279,139 +279,150 @@ void loop() {
 void readKeypadInput (void) {
   customKey = customKeypad.getKey();
   
-//  if (customKey != NO_KEY){                             //only used for testing keypad (uncomment if required for testing keypad)
-// Serial.print("customKey = ");                          //only used for testing keypad (uncomment if required for testing keypad)
-// Serial.println(customKey);                             //only used for testing keypad (uncomment if required for testing keypad)
-//  }                                                     //only used for testing keypad (uncomment if required for testing keypad)
+  //  if (customKey != NO_KEY){                             //only used for testing keypad (uncomment if required for testing keypad)
+  // Serial.print("customKey = ");                          //only used for testing keypad (uncomment if required for testing keypad)
+  // Serial.println(customKey);                             //only used for testing keypad (uncomment if required for testing keypad)
+  //  }                                                     //only used for testing keypad (uncomment if required for testing keypad)
 
-if(customKey == 'E'){                                     //check for Load on/off
-  LoadSwitch();
-}
+  if(customKey == 'E'){                                     //check for Load on/off
+    LoadSwitch();
+  }
 
   if(customKey == 'D'){                                   //check if Set-Up Mode Selected 
-  delay(200);
-  toggle = false;                                         //switch Load OFF
-  userSetUp();
-  encoderPosition = 0;                                    //reset encoder reading to zero
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point text character reset
-}
+    delay(200);
+    toggle = false;                                         //switch Load OFF
+    userSetUp();
+    encoderPosition = 0;                                    //reset encoder reading to zero
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point text character reset
+  }
  
   if(customKey == 'C'){                                   //check if Transient Mode Selected
-  toggle = false;                                         //switch Load OFF
-  transientType();
- 
-  encoderPosition = 0;                                    //reset encoder reading to zero
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point text character reset
+    toggle = false;                                         //switch Load OFF
+    transientType();
+  
+    encoderPosition = 0;                                    //reset encoder reading to zero
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point text character reset
   }
                
   if(customKey == 'A'){                                   //check if Constant Current button pressed
-  toggle = false;                                         //switch Load OFF
-  lcd.setCursor(8,0);
-  lcd.print("OFF");
-  Current();                                              //if selected go to Constant Current Selected routine
-  encoderPosition = 0;                                    //reset encoder reading to zero
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point test character reset
+    toggle = false;                                         //switch Load OFF
+    lcd.setCursor(8,0);
+    lcd.print("OFF");
+    Current();                                              //if selected go to Constant Current Selected routine
+    encoderPosition = 0;                                    //reset encoder reading to zero
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point test character reset
   }
          
   if(customKey == 'B'){                                   //check if Constant Power button pressed
-  toggle = false;                                         //switch Load OFF
-  lcd.setCursor(8,0);
-  lcd.print("OFF"); 
-  Power();                                                //if selected go to Constant Power Selected routine
-  encoderPosition = 0;                                    //reset encoder reading to zero
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point test character reset
+    toggle = false;                                         //switch Load OFF
+    lcd.setCursor(8,0);
+    lcd.print("OFF"); 
+    Power();                                                //if selected go to Constant Power Selected routine
+    encoderPosition = 0;                                    //reset encoder reading to zero
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point test character reset
   }
           
   if(customKey == '#'){                                   //check if Constant Resistance button pressed  
-  toggle = false;                                         //switch Load OFF
-  lcd.setCursor(8,0);
-  lcd.print("OFF");  
-  Resistance();                                           //if selected go to Constant Resistance Selected routine
-  encoderPosition = 0;                                    //reset encoder reading to zero
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point test character reset
+    toggle = false;                                         //switch Load OFF
+    lcd.setCursor(8,0);
+    lcd.print("OFF");  
+    Resistance();                                           //if selected go to Constant Resistance Selected routine
+    encoderPosition = 0;                                    //reset encoder reading to zero
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point test character reset
   }
 
   if(customKey == '*'){                                   //check if Battery Capacity button pressed
-  dac.setVoltage(0,false);                                //Ensures Load is OFF - sets DAC output voltage to 0
-  toggle = false;                                         //switch Load OFF
-  batteryType();                                          //select battery type
-  index = 0;
-  z = 1;                                                  //sets column position for LCD displayed character
-  decimalPoint = (' ');                                   //clear decimal point test character reset
+    dac.setVoltage(0,false);                                //Ensures Load is OFF - sets DAC output voltage to 0
+    toggle = false;                                         //switch Load OFF
+    batteryType();                                          //select battery type
+    index = 0;
+    z = 1;                                                  //sets column position for LCD displayed character
+    decimalPoint = (' ');                                   //clear decimal point test character reset
 
     if (exitMode == 1){                                   //if NO battery type selected revert to CC Mode
-    lcd.setCursor(8,0);
-    lcd.print("OFF");
-    Current();                                            //if selected go to Constant Current Selected routine
-    encoderPosition = 0;                                  //reset encoder reading to zero
-    customKey = 'A';
-    }
-    else
-    {
-    lcd.setCursor(16,2);
-    lcd.print(BatteryType);                               //print battery type on LCD 
-    lcd.setCursor(8,0);
-    lcd.print("OFF");
-    timer.reset();                                        //reset timer
-    BatteryLifePrevious = 0;
-    CP = 9;                                               //set cursor position
-    BatteryCapacity();                                    //go to Battery Capacity Routine
+      lcd.setCursor(8,0);
+      lcd.print("OFF");
+      Current();                                            //if selected go to Constant Current Selected routine
+      encoderPosition = 0;                                  //reset encoder reading to zero
+      customKey = 'A';
+    } else {
+      lcd.setCursor(16,2);
+      lcd.print(BatteryType);                               //print battery type on LCD 
+      lcd.setCursor(8,0);
+      lcd.print("OFF");
+      timer.reset();                                        //reset timer
+      BatteryLifePrevious = 0;
+      CP = 9;                                               //set cursor position
+      BatteryCapacity();                                    //go to Battery Capacity Routine
     }
   }
 
-if (Mode != "BC"){
+  if (Mode == "BC"){                                       //In battery mode, use clear input to reset statistics
+    if(customKey == '<'){                                 //clear input entry
+        //Clear battery statistics and timer
+        BatteryLife = 0;
+        BatteryLifePrevious = 0;
+        lcd.setCursor(9,3);
+        lcd.print("0000");
 
-  if(customKey >= '0' && customKey <= '9'){               //check for keypad number input
-       numbers[index++] = customKey;
-       numbers[index] = '\0';
-       lcd.setCursor(z,3);                                //                   
-       lcd.print(customKey);                              //show number input on LCD
-       z = z+1;
-     }
-  
-  if(customKey == '>'){                                   //check if decimal button key pressed
-      if (decimalPoint != ('>')){                         //test if decimal point entered twice - if so skip 
-      numbers[index++] = '.';
+        timer.reset();
+        lcd.setCursor(0,3);
+        lcd.print (timer.getTime());
+    }
+  }
+
+  if (Mode != "BC"){
+
+    if(customKey >= '0' && customKey <= '9'){               //check for keypad number input
+      numbers[index++] = customKey;
       numbers[index] = '\0';
-      lcd.setCursor(z,3);
-      lcd.print(".");
+      lcd.setCursor(z,3);                                //                   
+      lcd.print(customKey);                              //show number input on LCD
       z = z+1;
-      decimalPoint = ('>');                             //used to indicate decimal point has been input
-        }
+    }
+    
+    if(customKey == '>'){                                   //check if decimal button key pressed
+      if (decimalPoint != ('>')){                         //test if decimal point entered twice - if so skip 
+        numbers[index++] = '.';
+        numbers[index] = '\0';
+        lcd.setCursor(z,3);
+        lcd.print(".");
+        z = z+1;
+        decimalPoint = ('>');                             //used to indicate decimal point has been input
       }
-
-  if(customKey == '<'){                                 //clear input entry
-     index = 0;
-     z = 1;                                             //sets column position for LCD displayed character
-     lcd.setCursor(z,3);
-     lcd.print("     ");
-     numbers[index] = '\0';                             //
-     decimalPoint = (' ');                              //clear decimal point test character reset
     }
 
-  if(customKey == 'F') {                                //use entered number
-    x = atof(numbers);     
-         reading = x;
-         encoderPosition = reading*1000;
-         index = 0;
-         numbers[index] = '\0';
-         z = 1;                                         //sets column position for LCD displayed character
-         lcd.setCursor(0,3);
-         lcd.print("        ");
-         decimalPoint = (' ');                          //clear decimal point test character reset
-          }
+    if(customKey == '<'){                                 //clear input entry
+      index = 0;
+      z = 1;                                             //sets column position for LCD displayed character
+      lcd.setCursor(z,3);
+      lcd.print("     ");
+      numbers[index] = '\0';                             //
+      decimalPoint = (' ');                              //clear decimal point test character reset
     }
-  
+
+    if(customKey == 'F') {                                //use entered number
+      x = atof(numbers);     
+      reading = x;
+      encoderPosition = reading*1000;
+      index = 0;
+      numbers[index] = '\0';
+      z = 1;                                         //sets column position for LCD displayed character
+      lcd.setCursor(0,3);
+      lcd.print("        ");
+      decimalPoint = (' ');                          //clear decimal point test character reset
+    }
+  }
 }
 
 //----------------------Limit Maximum Current Setting-----------------------------------------
@@ -844,7 +855,7 @@ void batteryType (void) {
 
   if (customKey == '7' || customKey == '8' || customKey == '9' || customKey == '0' || customKey == 'A' || customKey == 'B' || customKey == 'C' || customKey == 'D' || customKey == '*' || customKey == '#' || customKey == 'E' || customKey == 'F' || customKey == '<' || customKey == '>' ){
 	  batteryType();                                                      //ignore other keys
-    }
+  }
 
   if (BatteryType == "LiPo" && exitMode != 1) {
 	  setBatteryCells();
@@ -866,7 +877,7 @@ void batteryType (void) {
 
   if(BatteryType == "SetV" && exitMode != 1){
 	 setBatteryCutOff();
-    }
+  }
 
 
 
